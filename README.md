@@ -5,8 +5,6 @@ A comprehensive web-based system for managing course assessments, ABET documenta
 
 # Installation
 
-## Installation Steps
-
 1. **Download the installer:**
    Clones the ATLAS repository from GitHub and navigates to the installer directory.
 

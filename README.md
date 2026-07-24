@@ -3,7 +3,7 @@
 A comprehensive web-based system for managing course assessments, ABET documentation, and academic reporting.
 
 
-# ATLAS Installation
+# Installation
 
 ## Installation Steps
 

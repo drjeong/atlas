@@ -50,3 +50,6 @@ The system uses the default user "atlasadmin" when installing packages. If the u
 Recommended: Select option 7 to run the complete installation process automatically.
 This option automatically runs all installation steps required to set up ATLAS.
 
+
+Default systemadmin: admin@atlas.edu / atlas123##
+

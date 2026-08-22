@@ -49,3 +49,30 @@
    Select an option `[1-8]`.
 
    **Recommended:** Select option `7` to run the complete installation process automatically. This option automatically runs all installation steps required to set up ATLAS.
+   
+Default ATLAS systemadmin: admin@atlas.edu / atlas123##
+
+
+## File Structure
+
+```
+atlas/
+├── install.sh
+├── LICENSE
+├── README.md
+├── modules/
+│   ├── additional_software.sh
+│   ├── basic_software.sh
+│   ├── config_setup.sh
+│   ├── database_import.sh
+│   ├── directory_setup.sh
+│   ├── package_components.sh
+│   ├── package_download.sh
+│   ├── package_extract.sh
+│   ├── package_install.sh
+│   ├── package_permissions.sh
+│   └── user_management.sh
+└── packages/
+    ├── atlas-1.0.0.tar.gz
+    └── atlas-1.0.0-db.sql.gz
+```

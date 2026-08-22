@@ -1,17 +1,3 @@
-# ATLAS - Assessment Tracking and Learning Analytics System
-
-A comprehensive web-based system for managing course assessments, ABET documentation, and academic reporting.
-
-## Default User
-
-The system uses the default user `atlasadmin` when installing packages. If the user doesn't exist, it will be created automatically. The user `atlasadmin` will be added to the `www-data` group.
-
-If you wish to use a different username, please revise the following shell files:
-- `package_install.sh`
-- `user_management.sh`
-- `config_setup.sh`
-- `directory_setup.sh`
-
 ## Installation
 
 1. **Download the installer**
@@ -23,7 +9,11 @@ If you wish to use a different username, please revise the following shell files
    cd atlas
 ```
 
-2. **Make scripts executable**
+2. **Make sure packages are in place**
+
+   Two package files, `atlas-1.0.0.tar.gz` and `atlas-1.0.0-db.sql.gz`, must be placed under the `packages` folder.
+
+3. **Make scripts executable**
 
    Grants execute permissions to all shell scripts in the current directory and the modules subfolder, allowing them to run as programs.
 
@@ -31,7 +21,7 @@ If you wish to use a different username, please revise the following shell files
    chmod +x *.sh modules/*.sh
 ```
 
-3. **Run installer**
+4. **Run installer**
 
    Executes the main installation script to set up ATLAS on your system.
 
@@ -39,7 +29,7 @@ If you wish to use a different username, please revise the following shell files
    sudo ./install.sh
 ```
 
-4. **Select installation option**
+5. **Select installation option**
 
    The installer will present the following menu:
 
@@ -59,8 +49,3 @@ If you wish to use a different username, please revise the following shell files
    Select an option `[1-8]`.
 
    **Recommended:** Select option `7` to run the complete installation process automatically. This option automatically runs all installation steps required to set up ATLAS.
-
-## Default System Admin
-
-- **Email:** `admin@atlas.edu`
-- **Password:** `atlas123##`

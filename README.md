@@ -2,31 +2,42 @@
 
 A comprehensive web-based system for managing course assessments, ABET documentation, and academic reporting.
 
-The system uses the default user "atlasadmin" when installing packages. If the user doesn't exist, it will be created automatically. The user "atlasadmin" will be added to the www-data group. If you wish to use a different username, please revise the following shell files:
+## Default User
 
+The system uses the default user `atlasadmin` when installing packages. If the user doesn't exist, it will be created automatically. The user `atlasadmin` will be added to the `www-data` group.
+
+If you wish to use a different username, please revise the following shell files:
 - `package_install.sh`
 - `user_management.sh`
 - `config_setup.sh`
 - `directory_setup.sh`
 
-# Installation
+## Installation
 
-1. **Download the installer:**
+1. **Download the installer**
+
    Clones the ATLAS repository from GitHub and navigates to the installer directory.
 
-   ```bash
+```bash
    git clone https://github.com/drjeong/atlas.git
    cd atlas
+```
 
-2. **Make scripts executable:**
+2. **Make scripts executable**
+
    Grants execute permissions to all shell scripts in the current directory and the modules subfolder, allowing them to run as programs.
 
+```bash
    chmod +x *.sh modules/*.sh
+```
 
-3. **Run installer:**
+3. **Run installer**
+
    Executes the main installation script to set up ATLAS on your system.
 
+```bash
    sudo ./install.sh
+```
 
 4. **Select installation option**
 
@@ -44,12 +55,12 @@ The system uses the default user "atlasadmin" when installing packages. If the u
    | 6 | Install ATLAS Package |
    | 7 | Complete Installation (Run All Steps) |
    | 8 | Exit |
-   | Select an option [1-8]:
 
+   Select an option `[1-8]`.
 
-Recommended: Select option 7 to run the complete installation process automatically.
-This option automatically runs all installation steps required to set up ATLAS.
+   **Recommended:** Select option `7` to run the complete installation process automatically. This option automatically runs all installation steps required to set up ATLAS.
 
+## Default System Admin
 
-Default systemadmin: admin@atlas.edu / atlas123##
-
+- **Email:** `admin@atlas.edu`
+- **Password:** `atlas123##`

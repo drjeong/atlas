@@ -48,7 +48,7 @@
 
    Select an option `[1-8]`.
 
-   **Recommended:** Select option `7` to run the complete installation process automatically. This option automatically runs all installation steps required to set up ATLAS.
+   **Recommended:** If you do not have any sofrware packages installed on your server machine, please select option `7` to run the complete installation process automatically. This option automatically runs all installation steps required to set up ATLAS.
    
 Default ATLAS systemadmin: admin@atlas.edu / atlas123##
 

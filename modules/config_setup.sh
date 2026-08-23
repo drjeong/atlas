@@ -239,6 +239,7 @@ if (!defined('__DIRECTORY_HOME__')) {
     // UNIVERSITY COURSE INFORMATION SYSTEM
     // ========================================================================
 
+    define('__COURSE_LISTING_METHOD__', 'BANNER9');
     define('__BANNER_SSB_URL__', '${BANNER_SSB_URL}');
     define('__COURSELISTURL__', __BANNER_SSB_URL__ . '/ssb/classSearch/getTerms?searchTerm=&offset=1&max=10&_=1768431664081');
 }

@@ -11,7 +11,7 @@
 
 2. **Make sure packages are in place**
 
-   Two package files, `atlas-1.0.0.tar.gz` and `atlas-1.0.0-db.sql.gz`, must be placed under the `packages` folder.
+   Two package files, `atlas-1.0.0.tar.gz` and `atlas-1.0.0-db.sql.gz`, should be placed under the `packages` folder.
 
 3. **Make scripts executable**
 

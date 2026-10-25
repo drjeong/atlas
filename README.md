@@ -6,8 +6,12 @@ Current ATLAS source package version: **1.5.2**.
 
 The installer detects `/etc/os-release` and loads an explicit profile:
 
-- Ubuntu 22.04/24.04: apt-get, Apache, MySQL.
-- Amazon Linux 2023: dnf, httpd, PHP-FPM, MariaDB 10.5.
+- Ubuntu 22.04/24.04/26.04 (including 26.04.1): apt-get, Apache, MySQL.
+  Ubuntu point releases normally report the base release in `/etc/os-release`
+  (`VERSION_ID=26.04` for 26.04.1); an explicit `26.04.1` value is also accepted.
+  Ubuntu 26.04 uses the shared Ubuntu profile; package availability and ATLAS
+  compatibility with its PHP/MySQL versions require target-host validation. (fully tested)
+- Amazon Linux 2023: dnf, httpd, PHP-FPM, MariaDB 10.5. (might cause migration problem)
 
 Other OS versions are rejected before installation. Run with
 `sudo bash install.sh`, not `sh install.sh`. Keep `platforms/` beside

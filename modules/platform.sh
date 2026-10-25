@@ -10,7 +10,7 @@ detect_platform() {
     local ID VERSION_ID PRETTY_NAME profile
     . /etc/os-release
     case "$ID:${VERSION_ID:-}" in
-        ubuntu:22.04|ubuntu:24.04)
+        ubuntu:22.04|ubuntu:24.04|ubuntu:26.04|ubuntu:26.04.1)
             profile=ubuntu
             PACKAGE_MANAGER=apt-get
             ;;
@@ -20,7 +20,7 @@ detect_platform() {
             ;;
         *)
             print_error "Unsupported operating system: ${PRETTY_NAME:-$ID}"
-            print_info "Supported: Ubuntu 22.04/24.04 and Amazon Linux 2023"
+            print_info "Supported: Ubuntu 22.04/24.04/26.04 (including 26.04.1) and Amazon Linux 2023"
             return 1
             ;;
     esac

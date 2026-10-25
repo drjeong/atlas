@@ -147,7 +147,7 @@ install_atlas_package() {
         print_info "=== Step 5/5: Restart Apache ==="
         if [ "$COMPONENTS_SUCCESS" = true ]; then
             print_info "Restarting Apache web server..."
-            systemctl restart apache2
+            systemctl restart ${APACHE_SERVICE}
             
             if [ $? -eq 0 ]; then
                 APACHE_SUCCESS=true
@@ -155,7 +155,7 @@ install_atlas_package() {
                 print_success "Step 5 completed"
             else
                 print_error "Failed to restart Apache"
-                print_info "You may need to restart it manually: sudo systemctl restart apache2"
+                print_info "You may need to restart it manually: sudo systemctl restart ${APACHE_SERVICE}"
             fi
         else
             print_info "Skipped (components not installed)"
@@ -262,7 +262,7 @@ display_installation_summary() {
     if [ "$PACKAGE_SUCCESS" = true ]; then
         echo ""
         echo "Permissions:"
-        echo "  Owner: atlasadmin:www-data"
+        echo "  Owner: atlasadmin:${APACHE_USER}"
         echo "  Directories: 755 (drwxr-xr-x)"
         echo "  PHP Files: 755 (rwxr-xr-x)"
         echo "  Other Files: 644 (rw-r--r--)"

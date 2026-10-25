@@ -128,7 +128,7 @@ setup_directories() {
         fi
         
         # Set ownership and permissions
-        chown atlasadmin:www-data "$DIR_PATH"
+        chown atlasadmin:${APACHE_USER} "$DIR_PATH"
         chmod 775 "$DIR_PATH"
     done
     
@@ -183,8 +183,8 @@ setup_directories() {
         fi
         
         # Set proper permissions
-        chown atlasadmin:www-data "$RSA_PRIV_KEY"
-        chown atlasadmin:www-data "$RSA_PUB_KEY"
+        chown atlasadmin:${APACHE_USER} "$RSA_PRIV_KEY"
+        chown atlasadmin:${APACHE_USER} "$RSA_PUB_KEY"
         chmod 640 "$RSA_PRIV_KEY"
         chmod 644 "$RSA_PUB_KEY"
         
@@ -199,7 +199,7 @@ setup_directories() {
     echo "  Repository Base: $REPO_BASE"
     echo "  Private Key: $RSA_PRIV_KEY"
     echo "  Public Key: $RSA_PUB_KEY"
-    echo "  Ownership: atlasadmin:www-data"
+    echo "  Ownership: atlasadmin:${APACHE_USER}"
     echo "  Permissions: drwxrwxr-x (775)"
     
     echo ""

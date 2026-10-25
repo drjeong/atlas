@@ -17,9 +17,9 @@ set_atlas_permissions() {
         return 1
     fi
     
-    # Verify www-data group exists
-    if ! getent group www-data &>/dev/null; then
-        print_error "Group 'www-data' does not exist"
+    # Verify ${APACHE_USER} group exists
+    if ! getent group ${APACHE_USER} &>/dev/null; then
+        print_error "Group '${APACHE_USER}' does not exist"
         return 1
     fi
     
@@ -27,9 +27,9 @@ set_atlas_permissions() {
     
     # Set ownership
     print_info "Setting ownership (this may take a moment)..."
-    chown -R atlasadmin:www-data "$WEB_DIR"
+    chown -R atlasadmin:${APACHE_USER} "$WEB_DIR"
     if [ $? -eq 0 ]; then
-        print_success "Owner: atlasadmin:www-data"
+        print_success "Owner: atlasadmin:${APACHE_USER}"
     else
         print_error "Failed to set ownership"
         return 1

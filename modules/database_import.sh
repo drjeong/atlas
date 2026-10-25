@@ -278,6 +278,17 @@ download_database_file() {
     return 0
 }
 
+# Stream dump normalization; no decompressed SQL file is written to disk.
+normalize_database_dump() {
+    case "$1" in
+        utf8mb4_0900_ai_ci|utf8mb4_unicode_ci) ;;
+        *) return 1 ;;
+    esac
+    sed -E \
+        -e "s/utf8mb4_(unicode_ci|0900_ai_ci)/$1/g" \
+        -e 's/DEFINER[[:space:]]*=[[:space:]]*`[^`]+`@`[^`]+`//g'
+}
+
 import_database_file() {
     echo ""
     print_header "Database Import Process"
@@ -290,7 +301,7 @@ import_database_file() {
     
     # Test MySQL connection
     print_info "Testing MySQL connection..."
-    if ! mysql -u root -p"$MYSQL_ROOT_PASS" -e "SELECT 1;" &>/dev/null; then
+    if ! mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" -e "SELECT 1;" &>/dev/null; then
         print_error "Failed to connect to MySQL. Please check your password."
         
         # Cleanup download directory if exists
@@ -301,6 +312,21 @@ import_database_file() {
         return 1
     fi
     print_success "MySQL connection successful"
+
+    # MySQL 8 supports 0900 collations; MariaDB 10.5 and older MySQL do not.
+    local DB_COLLATION COLLATION_SUPPORT
+    if ! COLLATION_SUPPORT=$(mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" \
+        --batch --skip-column-names -e "SELECT COUNT(*) FROM information_schema.COLLATIONS WHERE COLLATION_NAME = 'utf8mb4_0900_ai_ci';"); then
+        print_error "Failed to detect supported database collations"
+        return 1
+    fi
+    DB_COLLATION=utf8mb4_unicode_ci
+    if [ "$COLLATION_SUPPORT" = 1 ]; then
+        DB_COLLATION=utf8mb4_0900_ai_ci
+    fi
+    print_info "Import encoding: utf8mb4; collation: $DB_COLLATION"
+    print_info "Explicit DEFINER clauses will be removed from the SQL dump."
+    print_info "Views/routines will use the importing account as their default definer; review SQL SECURITY privileges after import."
     
     # Get database configuration
     echo ""
@@ -340,7 +366,7 @@ import_database_file() {
     # Create database
     echo ""
     print_info "Creating database '$DB_NAME'..."
-    mysql -u root -p"$MYSQL_ROOT_PASS" -e "CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
+    mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" -e "CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE $DB_COLLATION;" 2>/dev/null
     
     if [ $? -ne 0 ]; then
         print_error "Failed to create database"
@@ -356,7 +382,7 @@ import_database_file() {
     
     # Create database user
     print_info "Creating database user '$DB_USER'..."
-    mysql -u root -p"$MYSQL_ROOT_PASS" <<EOF 2>/dev/null
+    mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" <<EOF 2>/dev/null
 CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
 GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost';
 FLUSH PRIVILEGES;
@@ -375,14 +401,22 @@ EOF
     print_info "Please wait..."
     echo ""
     
-    # Show progress indicator if pv is available
-    if command -v pv &> /dev/null; then
-        gunzip < "$DB_FILE" | pv -p -t -e -r -b 2>&1 | mysql -u root -p"$MYSQL_ROOT_PASS" "$DB_NAME" 2>/dev/null
-        IMPORT_RESULT=$?
+    # Keep progress on stderr, SQL on stdout, and catch every pipeline failure.
+    # pipefail is scoped to a subshell so it does not affect other installer steps.
+    local IMPORT_RESULT
+    if (
+        set -o pipefail
+        if command -v pv &> /dev/null; then
+            gunzip -c "$DB_FILE" | normalize_database_dump "$DB_COLLATION" |
+                pv -p -t -e -r -b |
+                mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" "$DB_NAME"
+        else
+            gunzip -c "$DB_FILE" | normalize_database_dump "$DB_COLLATION" |
+                mysql --default-character-set=utf8mb4 -u root -p"$MYSQL_ROOT_PASS" "$DB_NAME"
+        fi
+    ); then
+        IMPORT_RESULT=0
     else
-        # No pv available, show a simple progress message
-        print_info "Importing (no progress indicator available)..."
-        gunzip < "$DB_FILE" | mysql -u root -p"$MYSQL_ROOT_PASS" "$DB_NAME" 2>/dev/null
         IMPORT_RESULT=$?
     fi
     
@@ -445,7 +479,7 @@ EOF
         print_error "Failed to import database"
         echo ""
         print_info "You can try importing manually:"
-        echo "  gunzip < $DB_FILE | mysql -u root -p $DB_NAME"
+        echo "  gunzip -c \"$DB_FILE\" | sed -E -e 's/utf8mb4_(unicode_ci|0900_ai_ci)/$DB_COLLATION/g' -e 's/DEFINER[[:space:]]*=[[:space:]]*\`[^\`]+\`@\`[^\`]+\`//g' | mysql --default-character-set=utf8mb4 -u root -p \"$DB_NAME\""
         echo ""
         print_info "Or run database import again:"
         echo "  Menu Option 6 → Choose Option 2 (Database setup only)"

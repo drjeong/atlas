@@ -20,7 +20,7 @@ install_atlas_components() {
             print_error "Failed to create PDFBox directory"
             return 1
         fi
-        chown -R atlasadmin:www-data "${WEB_DIR}/toolbox"
+        chown -R atlasadmin:${APACHE_USER} "${WEB_DIR}/toolbox"
     fi
     
     PDFBOX_VERSION="3.0.2"
@@ -42,7 +42,7 @@ install_atlas_components() {
         fi
         
         if [ -f "$PDFBOX_JAR" ]; then
-            chown atlasadmin:www-data "$PDFBOX_JAR"
+            chown atlasadmin:${APACHE_USER} "$PDFBOX_JAR"
             chmod 644 "$PDFBOX_JAR"
             print_success "PDFBox installed"
         else
@@ -69,7 +69,7 @@ install_atlas_components() {
     if [ ! -d "${WEB_DIR}/images" ]; then
         mkdir -p "${WEB_DIR}/images"
         if [ $? -eq 0 ]; then
-            chown -R atlasadmin:www-data "${WEB_DIR}/images"
+            chown -R atlasadmin:${APACHE_USER} "${WEB_DIR}/images"
             chmod 755 "${WEB_DIR}/images"
             print_success "Images directory created: ${WEB_DIR}/images"
         else

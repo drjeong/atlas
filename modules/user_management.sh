@@ -34,16 +34,16 @@ create_atlas_user() {
     
     print_success "User '$USERNAME' created"
     
-    # Add user to www-data group
-    print_info "Adding user to www-data group..."
-    usermod -a -G www-data "$USERNAME"
+    # Add user to ${APACHE_USER} group
+    print_info "Adding user to ${APACHE_USER} group..."
+    usermod -a -G ${APACHE_USER} "$USERNAME"
     
     if [ $? -ne 0 ]; then
-        print_error "Failed to add user to www-data group"
+        print_error "Failed to add user to ${APACHE_USER} group"
         return 1
     fi
     
-    print_success "User added to www-data group"
+    print_success "User added to ${APACHE_USER} group"
     
     # Set password
     echo ""
@@ -70,7 +70,7 @@ create_atlas_user() {
     GRANT_SUDO=${GRANT_SUDO:-N}
     
     if [ "$GRANT_SUDO" = "y" ] || [ "$GRANT_SUDO" = "Y" ]; then
-        usermod -aG sudo "$USERNAME"
+        usermod -aG "$SUDO_GROUP" "$USERNAME"
         print_success "Sudo privileges granted"
     fi
     

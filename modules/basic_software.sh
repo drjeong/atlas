@@ -9,9 +9,9 @@ install_basic_software() {
     PHP_INSTALLED=false
     MYSQL_INSTALLED=false
     
-    if command -v apache2 &> /dev/null; then
+    if command -v "$APACHE_COMMAND" &> /dev/null; then
         APACHE_INSTALLED=true
-        print_info "Apache2 is already installed ($(apache2 -v | head -n 1 | cut -d' ' -f3))"
+        print_info "Apache2 is already installed ($("$APACHE_COMMAND" -v | head -n 1 | cut -d' ' -f3))"
     fi
     
     if command -v php &> /dev/null; then
@@ -21,7 +21,7 @@ install_basic_software() {
     
     if command -v mysql &> /dev/null; then
         MYSQL_INSTALLED=true
-        print_info "MySQL is already installed ($(mysql --version | cut -d' ' -f6))"
+        print_info "MySQL-compatible client is already installed ($(mysql --version))"
     fi
     
     echo ""
@@ -73,15 +73,14 @@ install_basic_software() {
         fi
     fi
     
-    # Update system if needed
+    # Refresh package metadata if needed
     if [ "$INSTALL_APACHE" = true ] || [ "$INSTALL_PHP" = true ] || [ "$INSTALL_MYSQL" = true ]; then
         echo ""
-        print_info "Updating system packages..."
-        apt update && apt upgrade -y
-        if [ $? -eq 0 ]; then
-            print_success "System packages updated"
+        print_info "Refreshing package metadata..."
+        if refresh_package_metadata; then
+            print_success "Package metadata refreshed"
         else
-            print_error "Failed to update system packages"
+            print_error "Failed to refresh package metadata"
             return 1
         fi
     fi
@@ -90,19 +89,18 @@ install_basic_software() {
     if [ "$INSTALL_APACHE" = true ]; then
         echo ""
         print_info "Installing Apache2..."
-        apt install apache2 -y
-        if [ $? -eq 0 ]; then
+        if install_packages "${APACHE_PACKAGES[@]}"; then
             print_success "Apache2 installed"
-            systemctl enable apache2
-            systemctl start apache2
+            systemctl enable "$APACHE_SERVICE" || return 1
+            systemctl start "$APACHE_SERVICE" || return 1
         else
             print_error "Failed to install Apache2"
             return 1
         fi
     else
         if [ "$APACHE_INSTALLED" = true ]; then
-            systemctl enable apache2 2>/dev/null
-            systemctl start apache2 2>/dev/null
+            systemctl enable "$APACHE_SERVICE" || return 1
+            systemctl start "$APACHE_SERVICE" || return 1
             print_info "Apache2 service ensured running"
         fi
     fi
@@ -111,34 +109,35 @@ install_basic_software() {
     if [ "$INSTALL_PHP" = true ]; then
         echo ""
         print_info "Installing PHP and extensions..."
-        apt install php libapache2-mod-php php-mysql php-cli php-curl php-json \
-                    php-mbstring php-xml php-zip php-gd php-intl -y
-        if [ $? -eq 0 ]; then
+        if install_packages "${PHP_PACKAGES[@]}"; then
             print_success "PHP and extensions installed"
-            systemctl restart apache2
         else
             print_error "Failed to install PHP"
             return 1
         fi
     fi
     
-    # Install MySQL
+    if [ -n "$PHP_FPM_SERVICE" ] && { [ "$INSTALL_PHP" = true ] || [ "$PHP_INSTALLED" = true ]; }; then
+        systemctl enable "$PHP_FPM_SERVICE" || return 1
+        systemctl start "$PHP_FPM_SERVICE" || return 1
+    fi
+
+    # Install MySQL (MariaDB on RPM distributions)
     if [ "$INSTALL_MYSQL" = true ]; then
         echo ""
         print_info "Installing MySQL Server..."
-        apt install mysql-server -y
-        if [ $? -eq 0 ]; then
+        if install_packages "${MYSQL_PACKAGES[@]}"; then
             print_success "MySQL Server installed"
-            systemctl enable mysql
-            systemctl start mysql
+            systemctl enable "$MYSQL_SERVICE" || return 1
+            systemctl start "$MYSQL_SERVICE" || return 1
         else
             print_error "Failed to install MySQL Server"
             return 1
         fi
     else
         if [ "$MYSQL_INSTALLED" = true ]; then
-            systemctl enable mysql 2>/dev/null
-            systemctl start mysql 2>/dev/null
+            systemctl enable "$MYSQL_SERVICE" || return 1
+            systemctl start "$MYSQL_SERVICE" || return 1
             print_info "MySQL service ensured running"
         fi
     fi
@@ -147,7 +146,7 @@ install_basic_software() {
     echo ""
     print_info "Verifying installations..."
     
-    if ! command -v apache2 &> /dev/null; then
+    if ! command -v "$APACHE_COMMAND" &> /dev/null; then
         print_error "Apache2 is not available"
         return 1
     fi
@@ -167,8 +166,8 @@ install_basic_software() {
     # Configure Apache
     echo ""
     print_info "Configuring Apache..."
-    a2enmod rewrite 2>/dev/null
-    systemctl restart apache2
+    configure_apache_modules || return 1
+    systemctl restart "$APACHE_SERVICE" || return 1
     print_success "Apache configured"
     
     echo ""

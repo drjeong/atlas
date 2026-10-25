@@ -22,7 +22,7 @@ install_additional_software() {
     
     # Update package list
     print_info "Updating package list..."
-    apt update
+    refresh_package_metadata || return 1
     
     # Install OpenJDK
     echo ""
@@ -31,15 +31,15 @@ install_additional_software() {
         read -p "Reinstall OpenJDK? (y/N): " REINSTALL_JAVA
         REINSTALL_JAVA=${REINSTALL_JAVA:-N}
         if [ "$REINSTALL_JAVA" = "y" ] || [ "$REINSTALL_JAVA" = "Y" ]; then
-            apt install default-jdk -y
+            install_packages "${JAVA_PACKAGES[@]}" || return 1
         fi
     else
         print_info "Installing OpenJDK..."
-        apt install default-jdk -y
-        if [ $? -eq 0 ]; then
+        if install_packages "${JAVA_PACKAGES[@]}"; then
             print_success "OpenJDK installed: $(java -version 2>&1 | head -n 1)"
         else
             print_error "Failed to install OpenJDK"
+            return 1
         fi
     fi
     
@@ -50,15 +50,15 @@ install_additional_software() {
         read -p "Reinstall Ghostscript? (y/N): " REINSTALL_GS
         REINSTALL_GS=${REINSTALL_GS:-N}
         if [ "$REINSTALL_GS" = "y" ] || [ "$REINSTALL_GS" = "Y" ]; then
-            apt install ghostscript -y
+            install_packages ghostscript || return 1
         fi
     else
         print_info "Installing Ghostscript..."
-        apt install ghostscript -y
-        if [ $? -eq 0 ]; then
+        if install_packages ghostscript; then
             print_success "Ghostscript installed"
         else
             print_error "Failed to install Ghostscript"
+            return 1
         fi
     fi
     
@@ -69,15 +69,15 @@ install_additional_software() {
         read -p "Reinstall pdfjam? (y/N): " REINSTALL_PDFJAM
         REINSTALL_PDFJAM=${REINSTALL_PDFJAM:-N}
         if [ "$REINSTALL_PDFJAM" = "y" ] || [ "$REINSTALL_PDFJAM" = "Y" ]; then
-            apt install texlive-extra-utils -y
+            install_packages "${PDFJAM_PACKAGES[@]}" || return 1
         fi
     else
-        print_info "Installing pdfjam (part of texlive-extra-utils)..."
-        apt install texlive-extra-utils -y
-        if [ $? -eq 0 ]; then
+        print_info "Installing pdfjam..."
+        if install_packages "${PDFJAM_PACKAGES[@]}"; then
             print_success "pdfjam installed"
         else
             print_error "Failed to install pdfjam"
+            return 1
         fi
     fi
     
@@ -88,15 +88,15 @@ install_additional_software() {
         read -p "Reinstall poppler-utils? (y/N): " REINSTALL_PDFINFO
         REINSTALL_PDFINFO=${REINSTALL_PDFINFO:-N}
         if [ "$REINSTALL_PDFINFO" = "y" ] || [ "$REINSTALL_PDFINFO" = "Y" ]; then
-            apt install poppler-utils -y
+            install_packages poppler-utils || return 1
         fi
     else
         print_info "Installing poppler-utils (pdfinfo)..."
-        apt install poppler-utils -y
-        if [ $? -eq 0 ]; then
+        if install_packages poppler-utils; then
             print_success "pdfinfo installed"
         else
             print_error "Failed to install poppler-utils"
+            return 1
         fi
     fi
     
@@ -107,16 +107,16 @@ install_additional_software() {
         read -p "Reinstall TexLive-XeLaTeX? (y/N): " REINSTALL_XELATEX
         REINSTALL_XELATEX=${REINSTALL_XELATEX:-N}
         if [ "$REINSTALL_XELATEX" = "y" ] || [ "$REINSTALL_XELATEX" = "Y" ]; then
-            apt install texlive-xetex texlive-fonts-recommended texlive-plain-generic -y
+            install_packages "${XELATEX_PACKAGES[@]}" || return 1
         fi
     else
         print_info "Installing XeLaTeX..."
         print_info "Note: This may take several minutes..."
-        apt install texlive-xetex texlive-fonts-recommended texlive-plain-generic -y
-        if [ $? -eq 0 ]; then
+        if install_packages "${XELATEX_PACKAGES[@]}"; then
             print_success "XeLaTeX installed"
         else
             print_error "Failed to install XeLaTeX"
+            return 1
         fi
     fi
     

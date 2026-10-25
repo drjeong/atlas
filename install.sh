@@ -67,6 +67,7 @@ fi
 
 # Check for required modules
 REQUIRED_MODULES=(
+    "platform"
     "basic_software" 
     "additional_software" 
     "user_management" 
@@ -119,6 +120,9 @@ fi
 
 echo ""
 
+# Detect the platform before installation changes.
+detect_platform || exit 1
+
 # Display welcome message
 clear
 print_header "ATLAS Installation Manager"
@@ -144,7 +148,7 @@ show_menu() {
     print_info "Current Status:"
     
     # Check status of each component
-    if command -v apache2 &> /dev/null && command -v php &> /dev/null && command -v mysql &> /dev/null; then
+    if command -v "$APACHE_COMMAND" &> /dev/null && command -v php &> /dev/null && command -v mysql &> /dev/null; then
         echo "  [✓] Basic Software: Installed"
     else
         echo "  [✗] Basic Software: Not Installed"

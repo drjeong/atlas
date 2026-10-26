@@ -262,7 +262,7 @@ if (!defined('__DIRECTORY_HOME__')) {
         define('__DIRECTORY_COURSEBI__', 's3://coursesyllabi/');
         define('__DIRECTORY_COURSEBINDERS__', 's3://coursebinders/');
         define('__DIRECTORY_COURSEASSESSMENTREPORTS__', 's3://courseassessmentreports/');
-        define('__DIRECTORY_COURSEASSESSMENTSAMPLES__', 's3://courseassessmentsamples/');
+
     } else {
         define('__DIRECTORY_ABETASSESSMENTS__', __DIRECTORY_REPOSITORY_HOME__ . '/assessments/');
         define('__DIRECTORY_ABETASSESSMENTSURVEY__', __DIRECTORY_REPOSITORY_HOME__ . '/assessmentsurvey/');
@@ -272,7 +272,7 @@ if (!defined('__DIRECTORY_HOME__')) {
         define('__DIRECTORY_COURSEBI__', __DIRECTORY_REPOSITORY_HOME__ . '/coursesyllabi/');
         define('__DIRECTORY_COURSEBINDERS__', __DIRECTORY_REPOSITORY_HOME__ . '/coursebinders/');
         define('__DIRECTORY_COURSEASSESSMENTREPORTS__', __DIRECTORY_REPOSITORY_HOME__ . '/courseassessmentreports/');
-        define('__DIRECTORY_COURSEASSESSMENTSAMPLES__', __DIRECTORY_REPOSITORY_HOME__ . '/courseassessmentsamples/');
+
     }
 
     // System related directories

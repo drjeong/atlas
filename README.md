@@ -138,7 +138,7 @@ values such as `s3://assessments/`; the application's storage adapter resolves
 these using the bucket and prefix. These are not literal bucket URLs.
 
 S3-aware directories are `abetsyllabi`, `assessments`, `assessmentsurvey`,
-`courseassessmentreports`, `courseassessmentsamples`, `courseassignmentsamples`,
+`courseassessmentreports`, `courseassignmentsamples`,
 `coursebinders`, `coursesyllabi`, and `instructionalmaterials`.
 `getcourseinfo` and `recyclebin` remain local, as do configuration, RSA keys,
 application files, and external tools. The generated config also includes

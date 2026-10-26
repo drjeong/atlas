@@ -11,7 +11,7 @@ PHP_PACKAGES=(php libapache2-mod-php php-mysql php-cli php-curl php-mbstring php
 MYSQL_PACKAGES=(mysql-server)
 JAVA_PACKAGES=(default-jdk)
 PDFJAM_PACKAGES=(texlive-extra-utils)
-XELATEX_PACKAGES=(texlive-xetex texlive-fonts-recommended texlive-plain-generic)
+XELATEX_PACKAGES=(texlive-xetex texlive-fonts-recommended texlive-plain-generic fonts-liberation fonts-liberation2)
 
 configure_apache_modules() {
     a2enmod rewrite
